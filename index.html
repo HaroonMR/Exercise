@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Minimal E-Commerce List</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #fafafa;
+      padding: 40px;
+      color: #222;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    select {
+      padding: 8px 10px;
+      font-size: 14px;
+    }
+
+    .list {
+      background: white;
+      border: 1px solid #ddd;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      padding: 14px 18px;
+      border-bottom: 1px solid #eee;
+      align-items: center;
+    }
+
+    .row:last-child {
+      border-bottom: none;
+    }
+
+    .name {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .category {
+      font-size: 13px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .price {
+      font-size: 15px;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .header {
+      background: #f2f2f2;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Product Catalog</h1>
+
+<div class="controls">
+  <select id="sortSelect">
+    <option value="">Sort</option>
+    <option value="price-asc">Price ↑</option>
+    <option value="price-desc">Price ↓</option>
+    <option value="name-asc">Name A–Z</option>
+    <option value="name-desc">Name Z–A</option>
+    <option value="rating-asc">Rating ↑</option>
+    <option value="rating-desc">Rating ↓</option>
+  </select>
+
+  <select id="categorySelect">
+    <option value="all">All Categories</option>
+    <option value="electronics">Electronics</option>
+    <option value="fashion">Fashion</option>
+    <option value="books">Books</option>
+    <option value="home">Home</option>
+    <option value="sports">Sports</option>
+  </select>
+</div>
+
+<div class="list" id="productList">
+  <div class="row header">
+    <div>Product</div>
+    <div>Category</div>
+    <div style="text-align:right;">Price</div>
+  </div>
+</div>
+
+<script>
+  const products = [
+    { name: "Laptop Pro 14", price: 85000, rating: 4.6, category: "electronics" },
+    { name: "Wireless Mouse", price: 1200, rating: 4.2, category: "electronics" },
+    { name: "Mechanical Keyboard", price: 5200, rating: 4.8, category: "electronics" },
+    { name: "Smart Watch", price: 15000, rating: 4.4, category: "electronics" },
+    { name: "Bluetooth Speaker", price: 4500, rating: 4.1, category: "electronics" },
+
+    { name: "Cotton T-Shirt", price: 799, rating: 3.9, category: "fashion" },
+    { name: "Running Shoes", price: 3499, rating: 4.5, category: "fashion" },
+    { name: "Winter Jacket", price: 5999, rating: 4.3, category: "fashion" },
+    { name: "Leather Wallet", price: 999, rating: 4.0, category: "fashion" },
+
+    { name: "JavaScript Mastery", price: 1299, rating: 4.7, category: "books" },
+    { name: "AI Basics", price: 1599, rating: 4.4, category: "books" },
+    { name: "Startup Playbook", price: 899, rating: 4.1, category: "books" },
+    { name: "Clean Code Guide", price: 1499, rating: 4.8, category: "books" },
+
+    { name: "Electric Kettle", price: 2499, rating: 4.2, category: "home" },
+    { name: "LED Desk Lamp", price: 1399, rating: 4.3, category: "home" },
+    { name: "Office Chair Cushion", price: 1799, rating: 4.0, category: "home" },
+
+    { name: "Yoga Mat", price: 699, rating: 4.6, category: "sports" },
+    { name: "Dumbbell Set", price: 3999, rating: 4.5, category: "sports" },
+    { name: "Cricket Bat", price: 2499, rating: 4.2, category: "sports" },
+    { name: "Football", price: 899, rating: 4.1, category: "sports" }
+  ];
+
+  const productList = document.getElementById("productList");
+  const sortSelect = document.getElementById("sortSelect");
+  const categorySelect = document.getElementById("categorySelect");
+
+  function render(list) {
+    productList.innerHTML = `
+      <div class="row header">
+        <div>Product</div>
+        <div>Category</div>
+        <div style="text-align:right;">Price</div>
+      </div>
+    `;
+
+    list.forEach(p => {
+      const row = document.createElement("div");
+      row.className = "row";
+      row.innerHTML = `
+  <div class="name">
+    ${p.name}
+    <div style="font-size:13px; color:#777; margin-top:4px;">
+      ⭐ ${p.rating.toFixed(1)} / 5
+    </div>
+  </div>
+  <div class="category">${p.category}</div>
+  <div class="price">₹${p.price}</div>
+`;
+
+      productList.appendChild(row);
+    });
+  }
+
+  function update() {
+    let data = [...products];
+
+    if (categorySelect.value !== "all") {
+      data = data.filter(p => p.category === categorySelect.value);
+    }
+
+    switch (sortSelect.value) {
+      case "price-asc":
+        data.sort((a, b) => a.price - b.price);
+        break;
+      case "price-desc":
+        data.sort((a, b) => b.price - a.price);
+        break;
+      case "name-asc":
+        data.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "name-desc":
+        data.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case "rating-asc":
+        data.sort((a, b) => a.rating - b.rating);
+        break;
+      case "rating-desc":
+        data.sort((a, b) => b.rating - a.rating);
+        break;
+    }
+
+    render(data);
+  }
+
+  sortSelect.addEventListener("change", update);
+  categorySelect.addEventListener("change", update);
+
+  render(products);
+</script>
+
+</body>
+</html>
